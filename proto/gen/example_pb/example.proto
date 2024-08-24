@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = "./example_pb";
+
+import "google/annotations.proto";
+
+// The Example service definition.
+service Example {
+  rpc Example(ExampleRequest) returns (ExampleReply) {
+    option (google.api.http) = {
+      get: "/example"
+      body: "*"
+    };
+  }
+}
+
+message ExampleRequest {
+  string name = 1;
+}
+
+message ExampleReply {
+  string name = 1;
+}
