@@ -37,7 +37,7 @@ func (b *Builder) Br(count int) {
 	}
 }
 
-// Get builded content
+// Get built content
 func (b *Builder) Get() string {
 	return b.content
 }
