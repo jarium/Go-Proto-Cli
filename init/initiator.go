@@ -25,6 +25,14 @@ func (i *Initiator) SetArgs(*flag.FlagSet) {
 }
 
 func (i *Initiator) Execute() error {
+	httpPlugin := "github.com/jarium/protoc-gen-http"
+	if err := runCommand("go", "get", httpPlugin); err != nil {
+		return err
+	}
+	if err := runCommand("go", "install", httpPlugin); err != nil {
+		return err
+	}
+
 	googleProtoFolder := "proto/google/"
 	if err := os.MkdirAll(googleProtoFolder, 0744); err != nil {
 		return fmt.Errorf("failed to create dir for dependency google proto files: %v", err)
@@ -34,12 +42,10 @@ func (i *Initiator) Execute() error {
 	cloneDir := "googleapis"
 	protoDestDir := "./proto/google/"
 
-	// Step 1: Clone the Google APIs repository
 	if err := runCommand("git", "clone", repoURL); err != nil {
 		return err
 	}
 
-	// Step 3: Copy necessary proto files
 	protoFiles := []string{"annotations.proto", "http.proto", "httpbody.proto"}
 	for _, protoFile := range protoFiles {
 		srcPath := filepath.Join(cloneDir, "google/api", protoFile)
