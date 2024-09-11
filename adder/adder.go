@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"gocli/content"
+	"github.com/jarium/go-proto-cli/content"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"os"

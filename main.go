@@ -4,8 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"gocli/adder"
-	"gocli/generator"
+	"github.com/jarium/go-proto-cli/adder"
+	"github.com/jarium/go-proto-cli/generator"
 	"os"
 )
 

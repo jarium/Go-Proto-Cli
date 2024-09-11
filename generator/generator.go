@@ -50,7 +50,7 @@ func (g *Generator) Execute() error {
 	outArgs := []string{
 		fmt.Sprintf("--go_out=%s", genFolder),
 		fmt.Sprintf("--go-grpc_out=%s", genFolder),
-		fmt.Sprintf("--go-http_out=%s", genFolder),
+		fmt.Sprintf("--http_out=%s", genFolder),
 		"--proto_path=./proto",
 		"--proto_path=./proto/google",
 	}
