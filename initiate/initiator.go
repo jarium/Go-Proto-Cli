@@ -28,12 +28,7 @@ func (i *Initiator) SetArgs(*flag.FlagSet) {
 }
 
 func (i *Initiator) Execute() error {
-	httpPlugin := "github.com/jarium/protoc-gen-http"
-
-	if err := executor.Exec("go", "get", httpPlugin); err != nil {
-		return err
-	}
-	if err := executor.Exec("go", "install", httpPlugin); err != nil {
+	if err := installPlugins(); err != nil {
 		return err
 	}
 
@@ -58,6 +53,29 @@ func (i *Initiator) Execute() error {
 		if err := copyFile(filepath.Join(srcFolder, f.Name()), filepath.Join("proto/google/", f.Name())); err != nil {
 			return fmt.Errorf("error when copying file: %s, err: %w", f.Name(), err)
 		}
+	}
+
+	return nil
+}
+
+func installPlugins() error {
+	httpPlugin := "github.com/jarium/protoc-gen-http"
+
+	if err := executor.Exec("go", "get", httpPlugin); err != nil {
+		return err
+	}
+	if err := executor.Exec("go", "install", httpPlugin); err != nil {
+		return err
+	}
+
+	gprcPlugin := "google.golang.org/protobuf/cmd/protoc-gen-go@latest"
+	if err := executor.Exec("go", "install", gprcPlugin); err != nil {
+		return err
+	}
+
+	goPlugin := "google.golang.org/protobuf/cmd/protoc-gen-go@latest"
+	if err := executor.Exec("go", "install", goPlugin); err != nil {
+		return err
 	}
 
 	return nil
