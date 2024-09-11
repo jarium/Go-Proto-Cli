@@ -4,6 +4,11 @@ go get github.com/jarium/go-proto-cli
 go install github.com/jarium/go-proto-cli
 ``` 
 
+### Init
+```bash
+go-proto-cli initiate
+```
+
 ### Add Proto File
 ```bash
 go-proto-cli add -name=example
