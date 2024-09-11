@@ -68,7 +68,7 @@ func installPlugins() error {
 		return err
 	}
 
-	gprcPlugin := "google.golang.org/protobuf/cmd/protoc-gen-go@latest"
+	gprcPlugin := "google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest"
 	if err := executor.Exec("go", "install", gprcPlugin); err != nil {
 		return err
 	}
