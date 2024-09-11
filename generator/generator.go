@@ -16,7 +16,7 @@ var (
 )
 
 type Args struct {
-	File string
+	Name string
 }
 
 type Generator struct {
@@ -32,20 +32,20 @@ func (g *Generator) GetName() string {
 }
 
 func (g *Generator) SetArgs(set *flag.FlagSet) {
-	set.StringVar(&g.ar.File, "file", "", "name of proto file")
+	set.StringVar(&g.ar.Name, "name", "", "Name of proto file")
 }
 
 func (g *Generator) Execute() error {
-	if g.ar.File == "" {
+	if g.ar.Name == "" {
 		return ErrNoFileName
 	}
 
-	if !strings.HasSuffix(g.ar.File, ".proto") {
-		g.ar.File += ".proto"
+	if !strings.HasSuffix(g.ar.Name, ".proto") {
+		g.ar.Name += ".proto"
 	}
 
 	genFolder := "proto/gen/"
-	folder := fmt.Sprintf("%s%s_pb/", genFolder, g.ar.File[:len(g.ar.File)-6])
+	folder := fmt.Sprintf("%s%s_pb/", genFolder, g.ar.Name[:len(g.ar.Name)-6])
 
 	outArgs := []string{
 		fmt.Sprintf("--go_out=%s", genFolder),
@@ -55,7 +55,7 @@ func (g *Generator) Execute() error {
 		"--proto_path=./proto/google",
 	}
 
-	cmd := exec.Command("protoc", append(outArgs, folder+g.ar.File)...)
+	cmd := exec.Command("protoc", append(outArgs, folder+g.ar.Name)...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

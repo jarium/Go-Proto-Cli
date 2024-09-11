@@ -13,7 +13,7 @@ import (
 const Name = "add"
 
 var (
-	ErrNoProtoName = errors.New("no proto name provided")
+	ErrNoProtoName = errors.New("no proto file name provided")
 )
 
 type Args struct {
