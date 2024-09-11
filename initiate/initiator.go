@@ -60,13 +60,13 @@ func (i *Initiator) Execute() error {
 
 func installDependencies() error {
 	ginLibrary := "github.com/gin-gonic/gin"
-	if err := executor.Exec("go", "get", ginLibrary); err != nil {
+	if err := executor.Exec("go", "get", "-u", ginLibrary); err != nil {
 		return err
 	}
 
 	httpPlugin := "github.com/jarium/protoc-gen-http"
 
-	if err := executor.Exec("go", "get", httpPlugin); err != nil {
+	if err := executor.Exec("go", "get", "-u", httpPlugin); err != nil {
 		return err
 	}
 	if err := executor.Exec("go", "install", httpPlugin); err != nil {
