@@ -4,8 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"os"
-	"os/exec"
+	"github.com/jarium/go-proto-cli/executor"
 	"strings"
 )
 
@@ -55,11 +54,7 @@ func (g *Generator) Execute() error {
 		"--proto_path=./proto/google",
 	}
 
-	cmd := exec.Command("protoc", append(outArgs, folder+g.ar.Name)...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
+	if err := executor.Exec("protoc", append(outArgs, folder+g.ar.Name)...); err != nil {
 		return fmt.Errorf("failed to generate code from proto: %v", err)
 	}
 
