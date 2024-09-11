@@ -1,4 +1,4 @@
-package init
+package initiate
 
 import (
 	"flag"
@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-const Name = "init"
+const Name = "initiate"
 
 type Initiator struct {
 }
