@@ -3,9 +3,11 @@ package initiate
 import (
 	"flag"
 	"fmt"
+	"github.com/jarium/go-proto-cli/executor"
+	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"runtime/debug"
 )
 
 const Name = "initiate"
@@ -26,67 +28,71 @@ func (i *Initiator) SetArgs(*flag.FlagSet) {
 
 func (i *Initiator) Execute() error {
 	httpPlugin := "github.com/jarium/protoc-gen-http"
-	if err := runCommand("go", "get", httpPlugin); err != nil {
+
+	if err := executor.Exec("go", "get", httpPlugin); err != nil {
 		return err
 	}
-	if err := runCommand("go", "install", httpPlugin); err != nil {
+	if err := executor.Exec("go", "install", httpPlugin); err != nil {
 		return err
 	}
 
-	googleProtoFolder := "proto/google/"
-	if err := os.MkdirAll(googleProtoFolder, 0744); err != nil {
+	if err := os.MkdirAll("proto/google/", 0744); err != nil {
 		return fmt.Errorf("failed to create dir for dependency google proto files: %v", err)
 	}
 
-	repoURL := "https://github.com/googleapis/googleapis.git"
-	cloneDir := "googleapis"
-	protoDestDir := "./proto/google/"
-
-	if err := runCommand("git", "clone", repoURL); err != nil {
-		return err
+	modPath, err := findModulePath("github.com/jarium/go-proto-cli")
+	if err != nil {
+		return fmt.Errorf("error finding module path: %w", err)
 	}
 
-	protoFiles := []string{"annotations.proto", "http.proto", "httpbody.proto"}
-	for _, protoFile := range protoFiles {
-		srcPath := filepath.Join(cloneDir, "google/api", protoFile)
-		destPath := filepath.Join(protoDestDir, protoFile)
+	srcFolder := filepath.Join(modPath, "initiate/google/")
+	srcFiles, err := os.ReadDir(srcFolder)
 
-		if err := copyFile(srcPath, destPath); err != nil {
-			return err
+	if err != nil {
+		return fmt.Errorf("error when reading proto files under google folder: %w", err)
+	}
+
+	for _, f := range srcFiles {
+		if err := copyFile(filepath.Join(srcFolder, f.Name()), "proto/google"); err != nil {
+			return fmt.Errorf("error when copying file: %s, err: %w", f.Name(), err)
 		}
-	}
-
-	if err := os.RemoveAll(cloneDir); err != nil {
-		return err
 	}
 
 	return nil
 }
 
-func runCommand(command string, args ...string) error {
-	cmd := exec.Command(command, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+func copyFile(srcPath, dstPath string) error {
+	srcFile, err := os.Open(srcPath)
+	if err != nil {
+		return fmt.Errorf("failed to open source file: %w", err)
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dstPath)
+	if err != nil {
+		return fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	return nil
 }
 
-func copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer sourceFile.Close()
-
-	destFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	_, err = destFile.ReadFrom(sourceFile)
-	if err != nil {
-		return err
+// findModulePath uses Go's module cache to locate the path to an external library.
+func findModulePath(moduleName string) (string, error) {
+	modInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		return "", fmt.Errorf("failed to read build info")
 	}
 
-	return destFile.Sync()
+	for _, dep := range modInfo.Deps {
+		if dep.Path == moduleName {
+			return dep.Replace.Path, nil
+		}
+	}
+
+	return "", fmt.Errorf("module %s not found in dependencies", moduleName)
 }
