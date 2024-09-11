@@ -1,13 +1,14 @@
 package initiate
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/jarium/go-proto-cli/executor"
 	"io"
 	"os"
 	"path/filepath"
-	"runtime/debug"
+	"runtime"
 )
 
 const Name = "initiate"
@@ -40,12 +41,13 @@ func (i *Initiator) Execute() error {
 		return fmt.Errorf("failed to create dir for dependency google proto files: %v", err)
 	}
 
-	modPath, err := findModulePath("github.com/jarium/go-proto-cli")
-	if err != nil {
-		return fmt.Errorf("error finding module path: %w", err)
+	_, file, _, ok := runtime.Caller(0)
+
+	if !ok {
+		return errors.New("unable to get file location of caller")
 	}
 
-	srcFolder := filepath.Join(modPath, "initiate/google/")
+	srcFolder := filepath.Join(filepath.Dir(file), "google/")
 	srcFiles, err := os.ReadDir(srcFolder)
 
 	if err != nil {
@@ -79,20 +81,4 @@ func copyFile(srcPath, dstPath string) error {
 	}
 
 	return nil
-}
-
-// findModulePath uses Go's module cache to locate the path to an external library.
-func findModulePath(moduleName string) (string, error) {
-	modInfo, ok := debug.ReadBuildInfo()
-	if !ok {
-		return "", fmt.Errorf("failed to read build info")
-	}
-
-	for _, dep := range modInfo.Deps {
-		if dep.Path == moduleName {
-			return dep.Replace.Path, nil
-		}
-	}
-
-	return "", fmt.Errorf("module %s not found in dependencies", moduleName)
 }
