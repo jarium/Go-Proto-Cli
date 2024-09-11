@@ -28,7 +28,7 @@ func (i *Initiator) SetArgs(*flag.FlagSet) {
 }
 
 func (i *Initiator) Execute() error {
-	if err := installPlugins(); err != nil {
+	if err := installDependencies(); err != nil {
 		return err
 	}
 
@@ -58,7 +58,12 @@ func (i *Initiator) Execute() error {
 	return nil
 }
 
-func installPlugins() error {
+func installDependencies() error {
+	ginLibrary := "github.com/gin-gonic/gin"
+	if err := executor.Exec("go", "get", ginLibrary); err != nil {
+		return err
+	}
+
 	httpPlugin := "github.com/jarium/protoc-gen-http"
 
 	if err := executor.Exec("go", "get", httpPlugin); err != nil {
