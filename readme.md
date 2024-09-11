@@ -1,4 +1,5 @@
 # Go Proto Cli
+A tool for both generating .proto files and go codes from them (including http, grpc server codes).
 ```bash
 go get github.com/jarium/go-proto-cli
 go install github.com/jarium/go-proto-cli
