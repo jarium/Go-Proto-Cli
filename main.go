@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jarium/go-proto-cli/adder"
 	"github.com/jarium/go-proto-cli/generator"
+	"github.com/jarium/go-proto-cli/init"
 	"os"
 )
 
@@ -16,6 +17,7 @@ type ICommand interface {
 }
 
 var Commands = map[string]ICommand{
+	init.Name:      init.NewInitiator(),
 	adder.Name:     adder.NewAdder(),
 	generator.Name: generator.NewGenerator(),
 }
