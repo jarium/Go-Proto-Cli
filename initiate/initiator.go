@@ -55,7 +55,7 @@ func (i *Initiator) Execute() error {
 	}
 
 	for _, f := range srcFiles {
-		if err := copyFile(filepath.Join(srcFolder, f.Name()), "proto/google"); err != nil {
+		if err := copyFile(filepath.Join(srcFolder, f.Name()), filepath.Join("proto/google/", f.Name())); err != nil {
 			return fmt.Errorf("error when copying file: %s, err: %w", f.Name(), err)
 		}
 	}
