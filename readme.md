@@ -5,6 +5,8 @@ go install github.com/jarium/go-proto-cli@latest
 ``` 
 
 ### Init
+* Install Google Protocol Buffers compiler (protoc) on your system to be able to run protoc cli commands.
+* Then run command to initiate the tool:
 ```bash
 go-proto-cli initiate
 ```
