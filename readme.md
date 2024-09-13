@@ -15,10 +15,10 @@ go-proto-cli initiate
 ```bash
 go-proto-cli add -name=example
 go-proto-cli add -name=example -http=true #with http server
-go-proto-cli add -name=example -http=true -lib=gin #with http server using gin library
 ``` 
 
 ### Generate Go Code From Proto File
 ```bash
 go-proto-cli generate -name=example
+go-proto-cli generate -name=example -lib=gin #generate http code using gin library
 ``` 
