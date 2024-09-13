@@ -16,6 +16,7 @@ var (
 
 type Args struct {
 	Name string
+	Lib  string
 }
 
 type Generator struct {
@@ -32,6 +33,7 @@ func (g *Generator) GetName() string {
 
 func (g *Generator) SetArgs(set *flag.FlagSet) {
 	set.StringVar(&g.ar.Name, "name", "", "Name of proto file")
+	set.StringVar(&g.ar.Lib, "lib", "", "Name of library for http")
 }
 
 func (g *Generator) Execute() error {
@@ -50,6 +52,7 @@ func (g *Generator) Execute() error {
 		fmt.Sprintf("--go_out=%s", genFolder),
 		fmt.Sprintf("--go-grpc_out=%s", genFolder),
 		fmt.Sprintf("--http_out=%s", genFolder),
+		fmt.Sprintf("--http_opt=lib=%s", g.ar.Lib),
 		"--proto_path=./proto",
 		"--proto_path=./proto/google",
 	}
